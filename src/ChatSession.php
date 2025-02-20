@@ -32,7 +32,8 @@ class ChatSession
         $this->history[] = new Content($parts, Role::User);
 
         $config = (new GenerationConfig())
-        ->withCandidateCount(1);
+        ->withCandidateCount(1)
+        ->withTemperature(0.5);
         $response = $this->model
             ->withGenerationConfig($config)
             ->generateContentWithContents($this->history);
@@ -44,6 +45,7 @@ class ChatSession
 
         return $response;
     }
+
 
     /**
      * @param callable(GenerateContentResponse): void $callback
@@ -98,4 +100,5 @@ class ChatSession
 
         return $clone;
     }
+
 }

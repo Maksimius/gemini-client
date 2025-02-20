@@ -7,6 +7,7 @@ namespace GeminiAPI\Resources;
 use GeminiAPI\Enums\MimeType;
 use GeminiAPI\Enums\Role;
 use GeminiAPI\Resources\Parts\FilePart;
+use GeminiAPI\Resources\Parts\FunctionCallPart;
 use GeminiAPI\Traits\ArrayTypeValidator;
 use GeminiAPI\Resources\Parts\ImagePart;
 use GeminiAPI\Resources\Parts\PartInterface;
@@ -55,6 +56,18 @@ class Content
         return new self(
             [
                 new TextPart($text),
+            ],
+            $role,
+        );
+    }
+
+    public static function raw(
+        mixed $content,
+        Role $role = Role::User,
+    ): self {
+        return new self(
+            [
+                $content,
             ],
             $role,
         );
@@ -134,6 +147,10 @@ class Content
             if (!empty($part['inlineData'])) {
                 $mimeType = MimeType::from($part['inlineData']['mimeType']);
                 $parts[] = new FilePart($mimeType, $part['inlineData']['data']);
+            }
+
+            if (!empty($part['functionCall'])) {
+                $parts[] = new FunctionCallPart($part['functionCall']['name'], $part['functionCall']['args'] ?? []);
             }
         }
 

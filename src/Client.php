@@ -26,6 +26,7 @@ use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use RuntimeException;
+use GeminiAPI\Resources\ModelName as GemniApiResourcesModelName;
 
 use function curl_close;
 use function curl_exec;
@@ -87,6 +88,11 @@ class Client implements GeminiClientInterface
         return $this->generativeModel(ModelName::GeminiPro15Flash);
     }
 
+    public function geminiProFlash2_0(): GenerativeModel
+    {
+        return $this->generativeModel(GemniApiResourcesModelName::GEMINI_2_0_FLASH_001);
+    }
+
 
     public function generativeModel(ModelName|string $modelName): GenerativeModel
     {
@@ -110,6 +116,7 @@ class Client implements GeminiClientInterface
     public function generateContent(GenerateContentRequest $request): GenerateContentResponse
     {
         $response = $this->doRequest($request);
+
         $json = json_decode($response, associative: true);
 
         return GenerateContentResponse::fromArray($json);

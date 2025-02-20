@@ -23,6 +23,8 @@ class GenerativeModel
 
     /** @var SafetySetting[] */
     private array $safetySettings = [];
+    private array $functionDeclarations = [];
+    private string $tools = '';
 
     private ?GenerationConfig $generationConfig = null;
 
@@ -58,6 +60,7 @@ class GenerativeModel
             $this->safetySettings,
             $this->generationConfig,
             $this->systemInstruction,
+            $this->functionDeclarations,
         );
 
         return $this->client->generateContent($request);
@@ -147,4 +150,19 @@ class GenerativeModel
 
         return $clone;
     }
+
+    /**
+     * Sets the function declarations and returns a cloned instance of the object.
+     *
+     * @param array $functionDeclarations List of function declarations to set.
+     *
+     * @return self A cloned instance with updated function declarations.
+     */
+    public function withFunctionDeclarations(array $functionDeclarations): self
+    {
+        $clone = clone $this;
+        $clone->functionDeclarations = $functionDeclarations;
+        return $clone;
+    }
+
 }

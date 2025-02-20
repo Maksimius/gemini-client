@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GeminiAPI\Responses;
 
+use GeminiAPI\Resources\Parts\FunctionCallPart;
 use GeminiAPI\Traits\ArrayTypeValidator;
 use GeminiAPI\Resources\Candidate;
 use GeminiAPI\Resources\Parts\PartInterface;
@@ -65,6 +66,19 @@ class GenerateContentResponse
         }
 
         return $parts[0]->text;
+    }
+
+    public function textOrCall(): null|string|array|FunctionCallPart
+    {
+        $parts = $this->parts();
+        if (count($parts) === 1) {
+            if ($parts[0] instanceof TextPart) {
+                return $parts[0]->text;
+            } elseif ($parts[0] instanceof FunctionCallPart) {
+                return $parts[0];
+            }
+        }
+        return null;
     }
 
     /**

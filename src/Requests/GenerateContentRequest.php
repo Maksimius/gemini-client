@@ -7,9 +7,11 @@ namespace GeminiAPI\Requests;
 use GeminiAPI\Enums\ModelName;
 use GeminiAPI\GenerationConfig;
 use GeminiAPI\Resources\Content;
+use GeminiAPI\Resources\Parts\FunctionPart;
 use GeminiAPI\SafetySetting;
 use GeminiAPI\Traits\ArrayTypeValidator;
 use GeminiAPI\Traits\ModelNameToString;
+use Illuminate\Support\Arr;
 use JsonSerializable;
 
 use function json_encode;
@@ -25,6 +27,7 @@ class GenerateContentRequest implements JsonSerializable, RequestInterface
      * @param SafetySetting[] $safetySettings
      * @param GenerationConfig|null $generationConfig
      * @param ?Content $systemInstruction
+     * @param ?Array $functionDeclarations
      */
     public function __construct(
         public readonly ModelName|string $modelName,
@@ -32,6 +35,7 @@ class GenerateContentRequest implements JsonSerializable, RequestInterface
         public readonly array $safetySettings = [],
         public readonly ?GenerationConfig $generationConfig = null,
         public readonly ?Content $systemInstruction = null,
+        public readonly ?array $functionDeclarations = null,
     ) {
         $this->ensureArrayOfType($this->contents, Content::class);
         $this->ensureArrayOfType($this->safetySettings, SafetySetting::class);
@@ -78,6 +82,19 @@ class GenerateContentRequest implements JsonSerializable, RequestInterface
 
         if ($this->systemInstruction) {
             $arr['systemInstruction'] = $this->systemInstruction;
+        }
+
+        if ($this->functionDeclarations) {
+            $arr['tools']['functionDeclarations'] = $this->functionDeclarations;
+            if (is_array($this->functionDeclarations)) {
+                /** @var FunctionPart $el */
+                $arr['toolConfig'] = [
+                    'functionCallingConfig' => [
+                        'mode' => 'ANY',
+                        'allowedFunctionNames' =>  array_map(fn($el) => $el->name, $this->functionDeclarations),
+                    ],
+                ];
+            }
         }
 
         return $arr;

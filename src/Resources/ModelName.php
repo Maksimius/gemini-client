@@ -28,6 +28,8 @@ class ModelName
     public const GEMINI_1_5_FLASH_8B = 'gemini-1.5-flash-8b';
     public const GEMINI_1_5_FLASH_8B_001 = 'gemini-1.5-flash-8b-001';
     public const GEMINI_1_5_FLASH_8B_LATEST = 'gemini-1.5-flash-8b-latest';
+    
+    public const GEMINI_2_0_FLASH_001 = 'gemini-2.0-flash-001';
 
     // Optimized for: Measuring the relatedness of text strings
     public const TEXT_EMBEDDING_004 = 'text-embedding-004';
