@@ -25,8 +25,9 @@ class FunctionResponsePart implements PartInterface, JsonSerializable
             'functionResponse' => [
                 'name' => $this->name,
                 'response' => [
-                    'result' => $this->result,
-                ],]
+                    'content' => $this->result,
+                ],
+            ],
         ];
     }
 

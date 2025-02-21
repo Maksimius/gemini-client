@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GeminiAPI;
 
+use GeminiAPI\Enums\InternalTool;
 use GeminiAPI\Enums\Role;
 use GeminiAPI\Resources\Content;
 use GeminiAPI\Resources\Parts\PartInterface;
@@ -30,6 +31,25 @@ class ChatSession
     public function sendMessage(PartInterface ...$parts): GenerateContentResponse
     {
         $this->history[] = new Content($parts, Role::User);
+
+        $config = (new GenerationConfig())
+        ->withCandidateCount(1)
+        ->withTemperature(0.5);
+        $response = $this->model
+            ->withGenerationConfig($config)
+            ->generateContentWithContents($this->history);
+
+        if (!empty($response->candidates)) {
+            $parts = $response->candidates[0]->content->parts;
+            $this->history[] = new Content($parts, Role::Model);
+        }
+
+        return $response;
+    }
+
+    public function sendFunctionAnswer(PartInterface ...$parts): GenerateContentResponse
+    {
+        $this->history[] = new Content($parts, Role::Tool);
 
         $config = (new GenerationConfig())
         ->withCandidateCount(1)

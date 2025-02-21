@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GeminiAPI\Requests;
 
+use GeminiAPI\Enums\InternalTool;
 use GeminiAPI\Enums\ModelName;
 use GeminiAPI\GenerationConfig;
 use GeminiAPI\Resources\Content;
@@ -36,6 +37,7 @@ class GenerateContentRequest implements JsonSerializable, RequestInterface
         public readonly ?GenerationConfig $generationConfig = null,
         public readonly ?Content $systemInstruction = null,
         public readonly ?array $functionDeclarations = null,
+        public readonly ?array $tools = null,
     ) {
         $this->ensureArrayOfType($this->contents, Content::class);
         $this->ensureArrayOfType($this->safetySettings, SafetySetting::class);
@@ -94,6 +96,13 @@ class GenerateContentRequest implements JsonSerializable, RequestInterface
                         'allowedFunctionNames' =>  array_map(fn($el) => $el->name, $this->functionDeclarations),
                     ],
                 ];
+            }
+        }
+
+        if ($this->tools) {
+            foreach ($this->tools as $tool) {
+                /** @var InternalTool $tool */
+                $arr['tools'][$tool->value] = [];
             }
         }
 

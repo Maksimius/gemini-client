@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GeminiAPI;
 
 use CurlHandle;
+use GeminiAPI\Enums\InternalTool;
 use GeminiAPI\Enums\ModelName;
 use GeminiAPI\Enums\Role;
 use GeminiAPI\Requests\CountTokensRequest;
@@ -24,7 +25,7 @@ class GenerativeModel
     /** @var SafetySetting[] */
     private array $safetySettings = [];
     private array $functionDeclarations = [];
-    private string $tools = '';
+    private array $tools = [];
 
     private ?GenerationConfig $generationConfig = null;
 
@@ -61,6 +62,7 @@ class GenerativeModel
             $this->generationConfig,
             $this->systemInstruction,
             $this->functionDeclarations,
+            $this->tools,
         );
 
         return $this->client->generateContent($request);
@@ -162,6 +164,20 @@ class GenerativeModel
     {
         $clone = clone $this;
         $clone->functionDeclarations = $functionDeclarations;
+        return $clone;
+    }
+
+    public function withTool(InternalTool $tool): self
+    {
+        $clone = clone $this;
+        $clone->tools[] = $tool;
+        return $clone;
+    }
+
+    public function disableFunctions(): self
+    {
+        $clone = clone $this;
+        $clone->functionDeclarations = [];
         return $clone;
     }
 
