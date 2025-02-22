@@ -28,6 +28,7 @@ class Candidate
         public readonly array $safetyRatings,
         public readonly int $tokenCount,
         public readonly int $index,
+        public readonly ?array $groundingMetadata
     ) {
         if ($tokenCount < 0) {
             throw new UnexpectedValueException('tokenCount cannot be negative');
@@ -70,6 +71,11 @@ class Candidate
             ? FinishReason::from($candidate['finishReason'])
             : FinishReason::OTHER;
 
+        //TODO: Make classes for this
+        $groundingMetadata = isset($candidate['groundingMetadata'])
+            ? $candidate['groundingMetadata']
+            : [];
+
         return new self(
             $content,
             $finishReason,
@@ -77,6 +83,7 @@ class Candidate
             $safetyRatings,
             $candidate['tokenCount'] ?? 0,
             $candidate['index'] ?? 0,
+            $groundingMetadata
         );
     }
 }

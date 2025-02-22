@@ -22,6 +22,7 @@ class GenerateContentResponse
      */
     public function __construct(
         public readonly array $candidates,
+        public readonly array $usageMetadata,
         public readonly ?PromptFeedback $promptFeedback = null,
     ) {
         $this->ensureArrayOfType($candidates, Candidate::class);
@@ -51,6 +52,18 @@ class GenerateContentResponse
         return $this->candidates[0]->content->parts;
     }
 
+    public function groundingMetadata(): array
+    {
+        if (empty($this->candidates)) {
+            throw new ValueError(
+                'The `GenerateContentResponse::groundingMetadata()` quick accessor '.
+                'only works for a single candidate, but none were returned. '.
+                'Check the `GenerateContentResponse::$promptFeedback` to see if the prompt was blocked.'
+            );
+        }
+        return $this->candidates[0]->citationMetadata->citationSources;
+    }
+
     public function text(): string
     {
         $parts = $this->parts();
@@ -77,6 +90,14 @@ class GenerateContentResponse
             } elseif ($parts[0] instanceof FunctionCallPart) {
                 return $parts[0];
             }
+        } else {
+            $answer = '';
+            foreach ($parts as $part) {
+                if ($part instanceof TextPart) {
+                    $answer .= $part->text . "\n";
+                }
+            }
+            return $answer;
         }
         return null;
     }
@@ -103,6 +124,10 @@ class GenerateContentResponse
         $promptFeedback = null;
         if (!empty($array['promptFeedback'])) {
             $promptFeedback = PromptFeedback::fromArray($array['promptFeedback']);
+        }
+
+        if (!empty($array['usageMetadata'])) {
+            $promptFeedback = $array['usageMetadata'];
         }
 
         $candidates = array_map(

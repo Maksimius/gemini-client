@@ -102,7 +102,7 @@ class GenerateContentRequest implements JsonSerializable, RequestInterface
         if ($this->tools) {
             foreach ($this->tools as $tool) {
                 /** @var InternalTool $tool */
-                $arr['tools'][$tool->value] = [];
+                $arr['tools'][][$tool->value] = (object)[];
             }
         }
 
