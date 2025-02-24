@@ -23,7 +23,7 @@ class FunctionCallReturnPart implements PartInterface, JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return ['functionCall' => $this->functionCall];
+        return $this->functionCall->jsonSerialize();
     }
 
     public function __toString(): string

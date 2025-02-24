@@ -49,7 +49,7 @@ class ChatSession
 
     public function sendFunctionAnswer(PartInterface ...$parts): GenerateContentResponse
     {
-        $this->history[] = new Content($parts, Role::Tool);
+        $this->history[] = new Content($parts, Role::Function);
 
         $config = (new GenerationConfig())
         ->withCandidateCount(1)

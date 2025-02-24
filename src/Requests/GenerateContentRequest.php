@@ -92,8 +92,8 @@ class GenerateContentRequest implements JsonSerializable, RequestInterface
                 /** @var FunctionPart $el */
                 $arr['toolConfig'] = [
                     'functionCallingConfig' => [
-                        'mode' => 'ANY',
-                        'allowedFunctionNames' =>  array_map(fn($el) => $el->name, $this->functionDeclarations),
+                        'mode' => 'AUTO', // 'AUTO', 'ANY'
+                        //'allowedFunctionNames' =>  array_map(fn($el) => $el->name, $this->functionDeclarations),
                     ],
                 ];
             }
